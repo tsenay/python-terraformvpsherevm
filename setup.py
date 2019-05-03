@@ -16,17 +16,17 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='terraformvspherevm',  
-    version='0.0.1',  
+    version='0.0.2',  
     description='Create VSphere resources using terraform',  
     long_description=long_description,  
-    long_description_content_type='text/markdown',   (see note above)
-    url='https://github.com/tsenay/python-terraform-vm',  
+    long_description_content_type='text/markdown',
+    url='https://github.com/tsenay/python-terraformvpsherevm',  
     author='Thomas Senay',  
     author_email='tsenay.consulting@icloud.com',  
     classifiers=[  
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
-        'Topic :: Software Development :: Provisionning Tools',
+        'Topic :: Software Development :: Libraries',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
@@ -45,10 +45,8 @@ setup(
         ],
     },
     project_urls={  
-        'Bug Reports': 'https://github.com/pypa/sampleproject/issues',
-        'Funding': 'https://donate.pypi.org',
-        'Say Thanks!': 'http://saythanks.io/to/example',
-        'Source': 'https://github.com/pypa/sampleproject/',
+        'Bug Reports': 'https://github.com/tsenay/python-terraformvpsherevm/issues',
+        'Source': 'https://github.com/tsenay/python-terraformvpsherevm',
     },
     
 )
