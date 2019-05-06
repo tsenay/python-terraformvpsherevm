@@ -7,7 +7,7 @@ import subprocess
 import logging
 from sys import argv
 
-from terraformvpsherevm.TerraformVM import TerraformVM
+from terraformvspherevm.TerraformVM import TerraformVM
 
 from os.path import exists, join, normpath
 from os import pathsep, linesep

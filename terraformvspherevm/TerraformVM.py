@@ -1,5 +1,5 @@
 from python_terraform import *
-from terraformvpsherevm import TerrascriptVSphereVM
+from terraformvspherevm import TerrascriptVSphereVM
 from os import environ
 
 class TerraformVM:
