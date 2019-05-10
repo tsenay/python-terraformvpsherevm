@@ -85,7 +85,7 @@ def main(main_args = argv):
     args.add_argument('-debug', action='store_true',
                       help='Verbose Output')
 
-    arguments = vars(args.parse_args(main_args))
+    arguments = vars(args.parse_args(main_args[1:]))
     
     if arguments['debug']:
         logger.setLevel(logging.DEBUG)
