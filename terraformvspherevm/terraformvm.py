@@ -2,11 +2,12 @@ from python_terraform import *
 from terraformvspherevm.terrascriptvspherevm import TerrascriptVSphereVM
 from os import environ, pathsep, linesep
 from os.path import exists, join, normpath
+import socket
 
 
 class TerraformVM:
     def __init__(self):
-        find_file = self.__search_file('terraform',environ['PATH'])
+        find_file = self.__search_file('terraform.exe',environ['PATH'])
         if not find_file:
             raise Exception
 
