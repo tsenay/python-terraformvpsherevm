@@ -1,6 +1,8 @@
 from python_terraform import *
-from terraformvspherevm import TerrascriptVSphereVM
-from os import environ
+from terraformvspherevm.terrascriptvspherevm import TerrascriptVSphereVM
+from os import environ, pathsep, linesep
+from os.path import exists, join, normpath
+
 
 class TerraformVM:
     def __init__(self):

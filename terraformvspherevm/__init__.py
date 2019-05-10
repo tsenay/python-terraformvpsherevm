@@ -7,9 +7,8 @@ import subprocess
 import logging
 from sys import argv
 
-from terraformvspherevm.TerraformVM import TerraformVM
+from terraformvspherevm.terraformvm import TerraformVM
 
-from os.path import exists, join, normpath
 from os import pathsep, linesep
 
 logging.basicConfig(format='[%(asctime)s] %(levelname)-5s: %(message)s',level=logging.INFO)
