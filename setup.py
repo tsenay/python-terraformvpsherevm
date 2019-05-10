@@ -16,7 +16,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='terraformvspherevm',  
-    version='0.0.3',  
+    version='0.0.4',  
     description='Create VSphere resources using terraform',  
     long_description=long_description,  
     long_description_content_type='text/markdown',
@@ -37,11 +37,11 @@ setup(
     python_requires='>=3.6',
     install_requires=['terrascript','python_terraform'],  
     package_data={  
-        'terraformvpsherevm': ['TerraformVM.py','TerrascriptVSphereVM.py'],
+        'terraformvspherevm': ['TerraformVM.py','TerrascriptVSphereVM.py'],
     },
     entry_points={  
         'console_scripts': [
-            'terraformvpsherevm=terraformvspherevm:main',
+            'terraformvspherevm=terraformvspherevm:main',
         ],
     },
     project_urls={  
