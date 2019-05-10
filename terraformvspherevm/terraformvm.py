@@ -7,7 +7,7 @@ import socket
 
 class TerraformVM:
     def __init__(self):
-        find_file = self.__search_file('terraform.exe',environ['PATH'])
+        find_file = self.__search_file('terraform',environ['PATH'])
         if not find_file:
             raise Exception
 
