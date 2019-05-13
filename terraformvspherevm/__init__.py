@@ -21,7 +21,7 @@ def main(main_args = argv):
     
 
     args = argparse.ArgumentParser(
-        prog='terraform-vm',
+        prog='terraformvspherevm',
         description="Manage vSphere Virtual Machines",
         epilog="When you want to destroy a VM, tfstate file is not required".format(linesep))
     args.add_argument('--action', choices=['create', 'destroy'],

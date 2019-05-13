@@ -21,7 +21,7 @@ Usage
 
 ```bash
 $ terraformvspherevm --help
-usage: terraform-vm [-h] --action {create,destroy} --datacenter DATACENTER    
+usage: terraformvspherevm [-h] --action {create,destroy} --datacenter DATACENTER    
                     --datastore DATASTORE --pool POOL --folder FOLDER
                     --template TEMPLATE --guestid GUESTID --name NAME
                     [--nic NIC] [--ip IP] [--cidr CIDR] [--gateway GATEWAY]   
