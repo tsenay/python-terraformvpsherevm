@@ -7,9 +7,10 @@ from terrascript.vsphere.d import vsphere_network
 from terrascript.vsphere.d import vsphere_virtual_machine \
     as data_vsphere_virtual_machine
 import logging
-    
+
+
 class TerrascriptVSphereVM:
-    def __init__(self, name, guestid, cpu, memory, folder = ''):
+    def __init__(self, name, guestid, cpu, memory, folder=''):
         self.ts = Terrascript()
         self.name = name
         self.guestid = guestid
@@ -27,8 +28,7 @@ class TerrascriptVSphereVM:
         self.iface_customization = []
         self.dns = []
 
-    
-    def setProvider(self, host, username , password):
+    def setProvider(self, host, username, password):
         logger = logging.getLogger()
         logger.debug("Set VSphere provider to {}".format(host))
         self.provider = provider(
@@ -38,8 +38,7 @@ class TerrascriptVSphereVM:
             vsphere_server=host,
             allow_unverified_ssl=True)
         self.ts.add(self.provider)
-    
-    
+
     def setDatacenter(self, datacenter):
         logger = logging.getLogger()
         logger.debug("Set VSphere datacenter to {}".format(datacenter))
@@ -48,7 +47,6 @@ class TerrascriptVSphereVM:
             name=datacenter)
         self.ts.add(self.datacenter)
 
-
     def setDatastore(self, datastore):
         if not self.datacenter:
             raise Exception
@@ -56,9 +54,9 @@ class TerrascriptVSphereVM:
             logger = logging.getLogger()
             logger.debug("Set VSphere datastore to {}".format(datastore))
             self.datastore = vsphere_datastore(
-            "ds",
-            name = datastore,
-            datacenter_id = self.datacenter.id)
+                "ds",
+                name=datastore,
+                datacenter_id=self.datacenter.id)
             self.ts.add(self.datastore)
 
     def setResourcePool(self, pool):
@@ -68,9 +66,9 @@ class TerrascriptVSphereVM:
             logger = logging.getLogger()
             logger.debug("Set VSphere Resource Pool to {}".format(pool))
             self.pool = vsphere_resource_pool(
-            "pool",
-            name = pool,
-            datacenter_id=self.datacenter.id)
+                "pool",
+                name=pool,
+                datacenter_id=self.datacenter.id)
             self.ts.add(self.pool)
 
     def setTemplate(self, template):
@@ -80,24 +78,30 @@ class TerrascriptVSphereVM:
             logger = logging.getLogger()
             logger.debug("Set VSphere template to {}".format(template))
             self.template = data_vsphere_virtual_machine(
-            "template",
-            name=template,
-            datacenter_id=self.datacenter.id)
+                "template",
+                name=template,
+                datacenter_id=self.datacenter.id)
             self.ts.add(self.template)
 
     def addDisk(self, size):
         idx = len(self.disks)
         logger = logging.getLogger()
         logger.debug("Add {}GB disk".format(size))
-        self.disks.append({"label": "disk{}".format(idx+1), "size": size})
-
+        if len(self.disks) == 0:
+            unitNumber = 0
+        else:
+            unitNumber = 1
+        self.disks.append({
+            "label": "disk{}".format(idx+1),
+            "size": size,
+            "unit_number": unitNumber})
 
     def addNetworkInterface(self, dvp, ipaddr, cidr):
         if not self.datacenter:
             raise Exception
         else:
             logger = logging.getLogger()
-            logger.debug("Add network card on {} DVP, with {}/{}".format(dvp,ipaddr,cidr))
+            logger.debug("Add network card on {} DVP, with {}/{}".format(dvp, ipaddr, cidr))
             vnet = vsphere_network(
                 dvp,
                 name=dvp,
@@ -105,21 +109,19 @@ class TerrascriptVSphereVM:
             self.networks.append(vnet)
             self.ts.add(vnet)
             self.interfaces.append({"network_id": vnet.id})
-            self.iface_customization.append({"ipv4_address": ipaddr,
+            self.iface_customization.append({
+                "ipv4_address": ipaddr,
                 "ipv4_netmask": cidr})
 
-    
     def setDomain(self, domain):
         logger = logging.getLogger()
         logger.debug("Set {} domain".format(domain))
         self.domain = domain
-    
 
     def setTimezone(self, timezone):
         logger = logging.getLogger()
         logger.debug("Set timezone to {}".format(timezone))
         self.timezone = timezone
-
 
     def setGateway(self, gateway):
         logger = logging.getLogger()
@@ -131,13 +133,12 @@ class TerrascriptVSphereVM:
         logger.debug("Add {} to DNS list".format(dns))
         self.dns.append(dns)
 
-
     def saveConfiguration(self, filename):
         linuxOptions = {}
         linuxOptions["host_name"] = self.name
         linuxOptions["domain"] = self.domain
         linuxOptions["time_zone"] = self.timezone
-        
+
         customize = {}
         customize["linux_options"] = linuxOptions
         customize["network_interface"] = self.iface_customization
@@ -175,7 +176,7 @@ class TerrascriptVSphereVM:
                 disk=self.disks,
                 clone=clone)
         self.ts.add(self.virtualMachine)
-        fd = open(filename,'w')
+        fd = open(filename, 'w')
         fd.writelines(self.ts.dump())
         fd.close()
         return 0

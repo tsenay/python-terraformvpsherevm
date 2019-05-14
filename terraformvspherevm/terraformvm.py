@@ -7,7 +7,7 @@ import socket
 
 class TerraformVM:
     def __init__(self):
-        find_file = self.__search_file('terraform',environ['PATH'])
+        find_file = self.__search_file('terraform', environ['PATH'])
         if not find_file:
             raise Exception
 
@@ -23,7 +23,6 @@ class TerraformVM:
 
         self.VmResources = {}
 
-
     def __search_file(self, filename, search_path):
         logger = logging.getLogger()
         file_found = 0
@@ -33,12 +32,13 @@ class TerraformVM:
                 file_found = 1
                 break
         if file_found:
-            logger.info("{} found at {}".format(filename, normpath(join(path, filename))))
+            logger.info("{} found at {}".format(
+                filename,
+                normpath(join(path, filename))))
             return True
         else:
             logger.error("{} not found".format(filename))
             return None
-
 
     def addVirtualMachine(self, properties):
         logger = logging.getLogger()
@@ -65,12 +65,12 @@ class TerraformVM:
             properties['cpu'],
             properties['ram'],
             properties['folder'])
-        
+
         vm.setProvider(
             properties['esxhost'],
             properties['esxuser'],
             properties['esxiPassword'])
-        
+
         vm.setDatacenter(properties['datacenter'])
         vm.setDatastore(properties['datastore'])
         vm.setResourcePool(properties['pool'])
@@ -80,33 +80,33 @@ class TerraformVM:
         vm.setGateway(properties['gateway'])
         for dns in properties['dns']:
             vm.addDns(dns)
-        
+
         if properties['disk'] is not None:
             for idx, size in enumerate(properties['disk']):
                 vm.addDisk(size)
 
         if properties['nic'] is not None:
             for idx, nic in enumerate(properties['nic']):
-                vm.addNetworkInterface(nic, properties['ip'][idx], properties['cidr'][idx])
+                vm.addNetworkInterface(
+                    nic,
+                    properties['ip'][idx],
+                    properties['cidr'][idx])
 
         self.VmResources[properties['name']] = {
             "script": "{}.tf.json".format(properties['name']),
             "properties": properties,
-            "terrascript": vm }
-
+            "terrascript": vm}
 
     def createTerraformConfigurationFiles(self, name):
         logger = logging.getLogger()
         logger.info("Create Terraform script '{}'".format(self.VmResources[name]['script']))
         self.VmResources[name]['terrascript'].saveConfiguration(self.VmResources[name]['script'])
 
-
     def cleanTerraformConfigurationFiles(self, name):
         logger = logging.getLogger()
         logger.info("Clean terraform configuration file {}".format(self.VmResources[name]['script']))
         os.unlink(self.VmResources[name]['script'])
 
-    
     def isVmExistsInStateFile(self, name):
         if self.tfstate:
             try:
@@ -116,7 +116,6 @@ class TerraformVM:
             except KeyError:
                 pass
         return False
-    
 
     def tfInit(self):
         logger = logging.getLogger()
@@ -124,7 +123,6 @@ class TerraformVM:
         return_code, stdout, stderr = self.terraform.init(
             input=False,
             no_color=IsFlagged)
-
 
     def createPlan(self, name):
         logger = logging.getLogger()
@@ -134,27 +132,25 @@ class TerraformVM:
             out=planFile,
             input=False,
             no_color=IsFlagged)
-        
+
         logger.debug(stdout)
 
         if return_code == 0:
             logger.warning("Nothing to create. Exit")
             exit(0)
-    
+
         if return_code != 2:
             logger.error("Return Code: {}".format(return_code))
             logger.error(stderr)
             raise Exception
-        
+
         self.VmResources[name]['planfile'] = planFile
-    
-    
+
     def deletePlan(self, name):
         logger = logging.getLogger()
         logger.debug("Remove file ''".format(self.VmResources[name]['planfile']))
         os.unlink(self.VmResources[name]['planfile'])
         del self.VmResources[name]['planfile']
-
 
     def applyPlan(self, name):
         logger = logging.getLogger()
@@ -164,7 +160,7 @@ class TerraformVM:
             planFile,
             input=False,
             no_color=IsFlagged)
-        
+
         logger.debug(stdout)
 
         if return_code != 0:
@@ -172,7 +168,6 @@ class TerraformVM:
             logger.error(stderr)
             raise Exception
         logger.info("Virtual Machine created")
-
 
     def destroyResource(self, name):
         logger = logging.getLogger()
@@ -186,7 +181,6 @@ class TerraformVM:
             logger.error(stderr)
             raise Exception
 
-
     def importResource(self, name):
         logger = logging.getLogger
         logger.info("Import Ressource from vSphere")
@@ -198,7 +192,6 @@ class TerraformVM:
                 vmProperties['folder'],
                 vmProperties['name']))
 
-  
     def createVM(self, name):
         self.createTerraformConfigurationFiles(name)
         self.tfInit()
@@ -207,8 +200,7 @@ class TerraformVM:
         self.deletePlan(name)
         self.cleanTerraformConfigurationFiles(name)
 
-
-    def destroyVM(self,name):
+    def destroyVM(self, name):
         self.createTerraformConfigurationFiles(name)
         self.tfInit()
         if not self.isVmExistsInStateFile(name):

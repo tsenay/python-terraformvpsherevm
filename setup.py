@@ -15,15 +15,15 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='terraformvspherevm',  
-    version='0.0.12',  
-    description='Create VSphere resources using terraform',  
-    long_description=long_description,  
+    name='terraformvspherevm',
+    version='0.0.13',
+    description='Create VSphere resources using terraform',
+    long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://github.com/tsenay/python-terraformvpsherevm',  
-    author='Thomas Senay',  
-    author_email='tsenay.consulting@icloud.com',  
-    classifiers=[  
+    url='https://github.com/tsenay/python-terraformvpsherevm',
+    author='Thomas Senay',
+    author_email='tsenay.consulting@icloud.com',
+    classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
         'Topic :: Software Development :: Libraries',
@@ -32,21 +32,20 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
     ],
-    keywords='vpshere terraform',  
-    packages=find_packages(exclude=['contrib', 'docs', 'tests']), 
+    keywords='vpshere terraform',
+    packages=find_packages(exclude=['contrib', 'docs', 'tests']),
     python_requires='>=3.6',
-    install_requires=['terrascript','python_terraform'],  
-    package_data={  
-        'terraformvspherevm': ['terraformvm.py','terrascriptvspherevm.py'],
+    install_requires=['terrascript', 'python_terraform'],
+    package_data={
+        'terraformvspherevm': ['terraformvm.py', 'terrascriptvspherevm.py'],
     },
-    entry_points={  
+    entry_points={
         'console_scripts': [
             'terraformvspherevm=terraformvspherevm:main',
         ],
     },
-    project_urls={  
+    project_urls={
         'Bug Reports': 'https://github.com/tsenay/python-terraformvpsherevm/issues',
         'Source': 'https://github.com/tsenay/python-terraformvpsherevm',
     },
-    
 )
