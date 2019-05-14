@@ -52,3 +52,5 @@ clean:
 	rm -f tests/*.pyc
 	rm -f .coverage
 	rm -f .noseid*
+	rm -rf build/*
+	rm -rf dist/*
