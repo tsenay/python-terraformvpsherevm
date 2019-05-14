@@ -84,17 +84,13 @@ class TerrascriptVSphereVM:
             self.ts.add(self.template)
 
     def addDisk(self, size):
-        idx = len(self.disks)
+        idx = len(self.disks) + 1
         logger = logging.getLogger()
         logger.debug("Add {}GB disk".format(size))
-        if len(self.disks) == 0:
-            unitNumber = 0
-        else:
-            unitNumber = 1
         self.disks.append({
-            "label": "disk{}".format(idx+1),
+            "label": "disk{}".format(idx),
             "size": size,
-            "unit_number": unitNumber})
+            "unit_number": idx})
 
     def addNetworkInterface(self, dvp, ipaddr, cidr):
         if not self.datacenter:
