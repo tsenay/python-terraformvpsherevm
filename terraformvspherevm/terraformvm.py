@@ -81,6 +81,9 @@ class TerraformVM:
         for dns in properties['dns']:
             vm.addDns(dns)
 
+        for search in properties['dnssearch']:
+            vm.addSuffix(search)
+
         if properties['disk'] is not None:
             for idx, size in enumerate(properties['disk']):
                 vm.addDisk(size)

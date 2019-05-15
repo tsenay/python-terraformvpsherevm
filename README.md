@@ -72,7 +72,7 @@ terraformvspherevm --name terrascript-test --datacenter "DC" --datastore "MyData
 --pool "ressource_pool" --template "rhel-7.5-vmw6.0" --guestid "rhel7_64Guest" --nic DvP_Nmae \
 --ip 10.0.123.123 --cidr 24 --gateway 10.0.123.1 --cpu 1 --ram 1024 --disk 10 --dns 10.0.123.50 \
 --dns 10.0.123.100 --esxhost esxhost.domain.com --esxuser "esxusername" --folder "terraformed" \
---domain my.domaon --timezone "Etc/UTC" --esxpassvar ESXPASS --action create
+--domain my.domaon --timezone "Etc/UTC" --esxpassvar ESXPASS --dnssearch "domain.com" --action create
 ```
 
 Destroy a VM

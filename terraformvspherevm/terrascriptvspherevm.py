@@ -27,6 +27,7 @@ class TerrascriptVSphereVM:
         self.interfaces = []
         self.iface_customization = []
         self.dns = []
+        self.dns_suffix =[]
 
     def setProvider(self, host, username, password):
         logger = logging.getLogger()
@@ -96,6 +97,9 @@ class TerrascriptVSphereVM:
             "size": size,
             "unit_number": unitNumber})
 
+    def addSuffix(self, dns):
+        self.dns_suffix.append(dns)
+
     def addNetworkInterface(self, dvp, ipaddr, cidr):
         if not self.datacenter:
             raise Exception
@@ -144,6 +148,7 @@ class TerrascriptVSphereVM:
         customize["network_interface"] = self.iface_customization
         customize["ipv4_gateway"] = self.gateway
         customize["dns_server_list"] = self.dns
+        customize["dns_suffix_list"] = self.dns_suffix
 
         clone = {}
         clone["template_uuid"] = self.template.id
