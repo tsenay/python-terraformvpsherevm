@@ -12,19 +12,21 @@ from terraformvspherevm.terrascriptvspherevm import TerrascriptVSphereVM
 
 from os import pathsep, linesep
 
-logging.basicConfig(format='[%(asctime)s] %(levelname)-5s: %(message)s',level=logging.INFO)
+logging.basicConfig(
+    format='[%(asctime)s] %(levelname)-5s: %(message)s',
+    level=logging.INFO)
 
 ####################
 # Main program
 ####################
-def main(main_args = argv):
-    logger = logging.getLogger(__name__)
-    
 
+
+def main(main_args=argv):
+    logger = logging.getLogger(__name__)
     args = argparse.ArgumentParser(
         prog='terraformvspherevm',
         description="Manage vSphere Virtual Machines",
-        epilog="When you want to destroy a VM, tfstate file is not required".format(linesep))
+        epilog="When you want to destroy a VM, tfstate file is not required")
     args.add_argument('--action', choices=['create', 'destroy'],
                       required=True,
                       help='Action to Execute against vSphere')
@@ -63,8 +65,10 @@ def main(main_args = argv):
     args.add_argument('--ram', action='store',
                       required=True,
                       help='Memory')
-    args.add_argument('--disk', action='append',
-                      help='Additionnal disk in GB. Repeat option for several disks')
+    args.add_argument(
+        '--disk',
+        action='append',
+        help='Additionnal disk in GB. Repeat option for several disks')
     args.add_argument('--dns', action='append',
                       help='DNS server')
     args.add_argument('--esxhost', action='store',
@@ -75,7 +79,7 @@ def main(main_args = argv):
                       help='ESXi Username')
     args.add_argument('--esxpassvar', action='store',
                       required=True,
-                      help='Environment variable that contain ESXi password')                      
+                      help='Environment variable that contain ESXi password')
     args.add_argument('--domain', action='store',
                       required=True,
                       help='DNS domain')
@@ -89,7 +93,7 @@ def main(main_args = argv):
                       help='Verbose Output')
 
     arguments = vars(args.parse_args(main_args[1:]))
-    
+
     if arguments['debug']:
         logger.setLevel(logging.DEBUG)
         logger.debug("DEBUG logging is active")
@@ -97,7 +101,7 @@ def main(main_args = argv):
     logger.debug(environ)
     vmProperties = dict(arguments)
     vmProperties['esxiPassword'] = environ[arguments['esxpassvar']]
-    
+
     logger = logging.getLogger()
     if vmProperties['nic'] is not None:
         if (len(vmProperties['nic']) != len(vmProperties['ip'])):
@@ -151,7 +155,7 @@ def main(main_args = argv):
                 nic,
                 vmProperties['ip'][idx],
                 vmProperties['cidr'][idx])
- 
+
     tvm = TerraformVM()
     tvm.addVM(vm)
     if arguments['action'] == 'create':

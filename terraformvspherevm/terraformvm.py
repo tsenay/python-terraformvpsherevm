@@ -4,6 +4,7 @@ from os import environ, pathsep, linesep
 from os.path import exists, join, normpath
 import socket
 
+
 def search_file(filename, search_path):
     logger = logging.getLogger()
     file_found = 0
@@ -20,6 +21,7 @@ def search_file(filename, search_path):
     else:
         logger.error("{} not found".format(filename))
         return None
+
 
 class TerraformVM:
     def __init__(self):
@@ -46,19 +48,24 @@ class TerraformVM:
 
     def createTerraformConfigurationFiles(self, name):
         logger = logging.getLogger()
-        logger.info("Create Terraform script '{}'".format(self.VmResources[name]['script']))
-        self.VmResources[name]['terrascript'].saveConfiguration(self.VmResources[name]['script'])
+        logger.info("Create Terraform script '{}'".format(
+            self.VmResources[name]['script']))
+        self.VmResources[name]['terrascript'].saveConfiguration(
+            self.VmResources[name]['script'])
 
     def cleanTerraformConfigurationFiles(self, name):
         logger = logging.getLogger()
-        logger.info("Clean terraform configuration file {}".format(self.VmResources[name]['script']))
+        logger.info("Clean terraform configuration file {}".format(
+            self.VmResources[name]['script']))
         os.unlink(self.VmResources[name]['script'])
 
     def isVmExistsInStateFile(self, name):
         if self.tfstate:
             try:
                 for module in self.tfstate['modules']:
-                    if module['resources']['vsphere_virtual_machine.vm']['primary']['attributes']['name'] == name:
+                    tfVm = module['resources']['vsphere_virtual_machine.vm']
+                    tfName = tfVm['primary']['attributes']['name']
+                    if tfName == name:
                         return True
             except KeyError:
                 pass
@@ -95,7 +102,8 @@ class TerraformVM:
 
     def deletePlan(self, name):
         logger = logging.getLogger()
-        logger.debug("Remove file ''".format(self.VmResources[name]['planfile']))
+        logger.debug("Remove file ''".format(
+            self.VmResources[name]['planfile']))
         os.unlink(self.VmResources[name]['planfile'])
         del self.VmResources[name]['planfile']
 
