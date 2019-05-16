@@ -22,7 +22,7 @@ noseids:
 	python3 -m nose --collect-only --with-id --id-file=.noseids $(TESTS)
 
 test: clean
-	$(NOSE) --with-id $(TESTS) $(TEST_ISSUES)
+	python3 setup.py nosetests
 
 test_issues:
 	$(NOSE) --with-id $(TEST_ISSUES)
@@ -32,9 +32,6 @@ debug:
 
 debug_issues:
 	$(NOSE) --with-id --pdb $(TEST_ISSUES)
-
-code: clean
-	./makecode.py
 
 package: clean
 	python3 setup.py clean
