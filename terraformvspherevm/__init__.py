@@ -8,6 +8,7 @@ import logging
 from sys import argv
 
 from terraformvspherevm.terraformvm import TerraformVM
+from terraformvspherevm.terrascriptvspherevm import TerrascriptVSphereVM
 
 from os import pathsep, linesep
 
@@ -96,12 +97,63 @@ def main(main_args = argv):
     logger.debug(environ)
     vmProperties = dict(arguments)
     vmProperties['esxiPassword'] = environ[arguments['esxpassvar']]
-    del vmProperties['action']
-    del vmProperties['debug']
-    del vmProperties['esxpassvar']
+    
+    logger = logging.getLogger()
+    if vmProperties['nic'] is not None:
+        if (len(vmProperties['nic']) != len(vmProperties['ip'])):
+            logger.critical("The number of --ip must be equal to --nic")
+            raise Exception
 
+        if (len(vmProperties['nic']) != len(vmProperties['cidr'])):
+            logger.critical("The number of --cidr must be equal to --nic")
+            raise Exception
+
+        for addr in vmProperties['ip']:
+            try:
+                socket.inet_aton(addr)
+                # legal
+            except socket.error:
+                logger.critical("{} is not a valid IP address".format(addr))
+                raise Exception
+
+    vm = TerrascriptVSphereVM(
+        vmProperties['name'],
+        vmProperties['guestid'],
+        vmProperties['cpu'],
+        vmProperties['ram'],
+        vmProperties['folder'])
+
+    vm.setProvider(
+        vmProperties['esxhost'],
+        vmProperties['esxuser'],
+        vmProperties['esxiPassword'])
+
+    vm.setDatacenter(vmProperties['datacenter'])
+    vm.setDatastore(vmProperties['datastore'])
+    vm.setResourcePool(vmProperties['pool'])
+    vm.setTemplate(vmProperties['template'])
+    vm.setTimezone(vmProperties['timezone'])
+    vm.setDomain(vmProperties['domain'])
+    vm.setGateway(vmProperties['gateway'])
+    for dns in vmProperties['dns']:
+        vm.addDns(dns)
+
+    for search in vmProperties['dnssearch']:
+        vm.addSuffix(search)
+
+    if vmProperties['disk'] is not None:
+        for idx, size in enumerate(vmProperties['disk']):
+            vm.addDisk(size)
+
+    if vmProperties['nic'] is not None:
+        for idx, nic in enumerate(vmProperties['nic']):
+            vm.addNetworkInterface(
+                nic,
+                vmProperties['ip'][idx],
+                vmProperties['cidr'][idx])
+ 
     tvm = TerraformVM()
-    tvm.addVirtualMachine(vmProperties)
+    tvm.addVM(vm)
     if arguments['action'] == 'create':
         tvm.createVM(arguments['name'])
     elif arguments['action'] == 'destroy':

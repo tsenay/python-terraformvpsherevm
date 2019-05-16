@@ -4,10 +4,26 @@ from os import environ, pathsep, linesep
 from os.path import exists, join, normpath
 import socket
 
+def search_file(filename, search_path):
+    logger = logging.getLogger()
+    file_found = 0
+    paths = str.split(search_path, pathsep)
+    for path in paths:
+        if exists(join(path, filename)):
+            file_found = 1
+            break
+    if file_found:
+        logger.info("{} found at {}".format(
+            filename,
+            normpath(join(path, filename))))
+        return True
+    else:
+        logger.error("{} not found".format(filename))
+        return None
 
 class TerraformVM:
     def __init__(self):
-        find_file = self.__search_file('terraform', environ['PATH'])
+        find_file = search_file('terraform', environ['PATH'])
         if not find_file:
             raise Exception
 
@@ -23,82 +39,10 @@ class TerraformVM:
 
         self.VmResources = {}
 
-    def __search_file(self, filename, search_path):
-        logger = logging.getLogger()
-        file_found = 0
-        paths = str.split(search_path, pathsep)
-        for path in paths:
-            if exists(join(path, filename)):
-                file_found = 1
-                break
-        if file_found:
-            logger.info("{} found at {}".format(
-                filename,
-                normpath(join(path, filename))))
-            return True
-        else:
-            logger.error("{} not found".format(filename))
-            return None
-
-    def addVirtualMachine(self, properties):
-        logger = logging.getLogger()
-        if properties['nic'] is not None:
-            if (len(properties['nic']) != len(properties['ip'])):
-                logger.critical("The number of --ip must be equal to --nic")
-                raise Exception
-
-            if (len(properties['nic']) != len(properties['cidr'])):
-                logger.critical("The number of --cidr must be equal to --nic")
-                raise Exception
-
-            for addr in properties['ip']:
-                try:
-                    socket.inet_aton(addr)
-                    # legal
-                except socket.error:
-                    logger.critical("{} is not a valid IP address".format(addr))
-                    raise Exception
-
-        vm = TerrascriptVSphereVM(
-            properties['name'],
-            properties['guestid'],
-            properties['cpu'],
-            properties['ram'],
-            properties['folder'])
-
-        vm.setProvider(
-            properties['esxhost'],
-            properties['esxuser'],
-            properties['esxiPassword'])
-
-        vm.setDatacenter(properties['datacenter'])
-        vm.setDatastore(properties['datastore'])
-        vm.setResourcePool(properties['pool'])
-        vm.setTemplate(properties['template'])
-        vm.setTimezone(properties['timezone'])
-        vm.setDomain(properties['domain'])
-        vm.setGateway(properties['gateway'])
-        for dns in properties['dns']:
-            vm.addDns(dns)
-
-        for search in properties['dnssearch']:
-            vm.addSuffix(search)
-
-        if properties['disk'] is not None:
-            for idx, size in enumerate(properties['disk']):
-                vm.addDisk(size)
-
-        if properties['nic'] is not None:
-            for idx, nic in enumerate(properties['nic']):
-                vm.addNetworkInterface(
-                    nic,
-                    properties['ip'][idx],
-                    properties['cidr'][idx])
-
-        self.VmResources[properties['name']] = {
-            "script": "{}.tf.json".format(properties['name']),
-            "properties": properties,
-            "terrascript": vm}
+    def addVM(self, terrascriptvm):
+        self.VmResources[terrascriptvm.name] = {
+            "script": "{}.tf.json".format(terrascriptvm.name),
+            "terrascript": terrascriptvm}
 
     def createTerraformConfigurationFiles(self, name):
         logger = logging.getLogger()
